@@ -1,0 +1,70 @@
+Page 1: Microchip Technology Inc. • 2355 West Chandler Blvd. • Chandler, AZ 85224-6199
+Page 1: Atlanta - 678-957-9614
+Page 1: Boston - 774-760-0087
+Page 1: Houston - 281-894-5983
+Page 1: Indianapolis - 317-773-8323
+Page 1: New York - 631-435-6000
+Page 1: Phoenix - 480-792-7200
+Page 1: San Jose - 408-735-9110
+Page 1: Italy - Milan - 39-0331-742611
+Page 1: Spain - Madrid - 34-91-708-08-90
+Page 1: UK - Wokingham - 44-118-921-5800
+Page 1: Australia - Sydney - 61-2-9868-6733
+Page 1: China - Chongqing - 86-23-8980-9588
+Page 1: China - Hangzhou - 86-571-8792-8115
+Page 1: China - Nanjing- 86-25-8473-2460
+Page 1: China - Wuhan - 86-27-5980-5300
+Page 1: China - Xiamen - 86-592-2388138
+Page 1: China - Xian - 86-29-8833-7252
+Page 1: India - Bangalore - 91-80-3090-4444
+Page 1: India - New Delhi - 91-11-4160-8631
+Page 1: India - Pune - 91-20-3019-1500
+Page 1: Japan - Osaka - 81-6-6152-7160
+Page 1: Malaysia - Kuala Lumpur - 60-3-6201-9857
+Page 1: Malaysia - Penang - 60-4-227-8870
+Page 1: Taiwan - Taipei - 886-2-2508-8600
+Page 1: PIC24FJ1024GB610 Plug-In Module (PIM) Information Sheet
+Page 1: The PIC24FJ1024GB610 Plug-in Module is designed to demonstrate the capabilities of the
+Page 1: PIC24FJ1024GB610 family using the Explorer 16 Board. Most of the pins from the device are
+Page 1: below shows the exceptions of the PIC24FJ1024GB610 pins that are not directly connected to the
+Page 2: PIC24FJ1024GB610 Plug-In Module (PIM) Information Sheet
+Page 2: 83
+Page 2: 83
+Page 2: 91
+Page 2: 91
+Page 2: 61
+Page 2: 61
+Page 2: 60
+Page 2: 60
+Page 2: 59
+Page 2: 59
+Page 2: 58
+Page 2: 58
+Page 2: 38
+Page 2: 38
+Page 2: 92
+Page 2: 92
+Page 2: 17
+Page 2: 17
+Page 2: PIC24FJ1024GB610
+Page 2: RPI38/OCM1D/RC 1
+Page 2: A N17/C1IND/RP21/OCM1A/PMA5/RG6
+Page 2: 17
+Page 2: 38
+Page 2: RP17/PMA8/RF5
+Page 2: 58
+Page 2: 59
+Page 2: 60
+Page 2: 61
+Page 2: 83
+Page 2: 91
+Page 2: AN22/OCM1F/PMA17/RA7
+Page 2: 92
+Page 2: 0603
+Page 2: 0603
+Page 2: 0603
+Page 2: 0603
+Page 2: 0603
+Page 2: 0603
+Page 2: 0603
+Page 2: 0603
