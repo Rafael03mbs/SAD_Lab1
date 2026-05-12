@@ -75,6 +75,12 @@ void __attribute__ ((interrupt, no_auto_psv)) _T1Interrupt(void)
 void __attribute__ ((interrupt, no_auto_psv)) _U1RXInterrupt(void)
 {
     IFS0bits.U1RXIF = 0;
+    
+    // Protecao Anti-Crash: Limpar OERR (Overrun Error) se o FIFO encher
+    if (U1STAbits.OERR) {
+        U1STAbits.OERR = 0; 
+    }
+    
     while (U1STAbits.URXDA) {
         char c = U1RXREG;
         if (rx_index < RX_BUF_SIZE - 1) {
@@ -183,7 +189,7 @@ void process_json_config(const char *json) {
     if (strstr(json, "\"D0\":") || strstr(json, "'D0':")) PORTAbits.RA0 = get_json_val(json, "D0", 0);
     if (strstr(json, "\"D1\":") || strstr(json, "'D1':")) PORTAbits.RA1 = get_json_val(json, "D1", 0);
     if (strstr(json, "\"D2\":") || strstr(json, "'D2':")) PORTAbits.RA2 = get_json_val(json, "D2", 0);
-    // Generic actuate like the document says: (Dw could mean anything, we provide direct port assignments)
+    if (strstr(json, "\"Db\":") || strstr(json, "'Db':")) PORTAbits.RA7 = get_json_val(json, "Db", 0); 
     
     // Read Configurations
     cfg_Ax = get_json_val(json, "Ax", cfg_Ax);
@@ -270,12 +276,19 @@ int main(int argc, char** argv) {
         // 1. Check if there's a JSON msg waiting
         if (message_received) {
             
-            // Critical Section for extracting config
-            IEC0bits.U1RXIE = 0; // Disable briefly
-            process_json_config((char*)rx_buffer);
+            // Seccao Critica super rapida: apenas copiar o buffer
+            char process_buf[RX_BUF_SIZE];
+            IEC0bits.U1RXIE = 0; 
+            strcpy(process_buf, (char*)rx_buffer);
             rx_index = 0;
             message_received = 0;
-            IEC0bits.U1RXIE = 1; // Enable again
+            
+            // Limpa qualquer Overrun Error cego que possa ter ocorrido neste nano-segundo
+            if (U1STAbits.OERR) U1STAbits.OERR = 0;
+            IEC0bits.U1RXIE = 1; 
+            
+            // Fazer a analise pesada do JSON ca fora da interrupcao:
+            process_json_config(process_buf);
             
             UART1_WriteString("{\"status\":\"config_updated\"}\r\n");
             
