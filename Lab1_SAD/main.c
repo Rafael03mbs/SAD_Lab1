@@ -916,9 +916,15 @@ int main(int argc, char** argv) {
             if (cfg_Az) {
                 int valorADC = ADC_Read(1);
                 if (valorADC == 0) valorADC = 1;
-                float voltagemLida = valorADC * (3.3 / 1023.0);
-                float resistenciaLDR = 10000 * ((3.3 / voltagemLida) - 1.0);
-                float valorLux = 500.0 / (resistenciaLDR / 1000.0);
+                if (valorADC > 1023) valorADC = 1023; // Prevent division-by-zero
+                
+                // For a 5k ohm fixed resistor in voltage divider:
+                // R_LDR = 5000 * (1024.0 / valorADC - 1.0)
+                // R_LDR_kOhm = 5.0 * (1024.0 / valorADC - 1.0)
+                // Lux = 500.0 / R_LDR_kOhm
+                // Simplified formula: Lux = (100.0 * valorADC) / (1024.0 - valorADC)
+                float valorLux = (100.0 * valorADC) / (1024.0 - valorADC);
+                
                 cur_Az = (unsigned int)valorLux;
                 buf_Az[sample_count] = cur_Az;
             }
