@@ -204,14 +204,14 @@ Default Scalar Model: Small
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x100              0x1c8a          0x2acf  (10959)
-.const                      0x1d8a               0x1fa           0x2f7  (759)
-.text                       0x1f84              0x1266          0x1b99  (7065)
-.dinit                      0x31ea                0x5e            0x8d  (141)
-.text                       0x3248                0x9a            0xe7  (231)
-.init.delay32               0x32e2                0x1c            0x2a  (42)
-.text                       0x32fe                0x24            0x36  (54)
+.const                      0x1d8a               0x21a           0x327  (807)
+.text                       0x1fa4              0x12e4          0x1c56  (7254)
+.dinit                      0x3288                0x5e            0x8d  (141)
+.text                       0x32e6                0x9a            0xe7  (231)
+.init.delay32               0x3380                0x1c            0x2a  (42)
+.text                       0x339c                0x24            0x36  (54)
 
-                 Total "program" memory used (bytes):         0x4b33  (19251) 1%
+                 Total "program" memory used (bytes):         0x4c20  (19488) 1%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x8000]
@@ -393,92 +393,92 @@ External Symbols in Program Memory (by address):
                   0x001cc6                  ___umoddi3
                   0x001cce                  ___divdi3
                   0x001d2e                  ___moddi3
-                  0x001f84                  _I2C2_ClearErrors
-                  0x001f90                  _I2C2_WaitIdle
-                  0x001fbc                  _I2C2_WaitFlagClear
-                  0x001fe6                  _I2C2_BusRecovery
-                  0x00201e                  _I2C2_Init
-                  0x00204e                  _I2C2_Start
-                  0x002068                  _I2C2_Stop
-                  0x00208c                  _I2C2_WriteByte
-                  0x002100                  _I2C2_ReadByte
-                  0x00217a                  _SD_ReadSensorsOnce
-                  0x002238                  _SD_ReadSensors
-                  0x002270                  _I2C2_AddressResponds
-                  0x002294                  _I2C2_ScanBus
-                  0x002358                  _LCD_Pulse
-                  0x00236e                  _LCD_Command
-                  0x002390                  _LCD_Char
-                  0x0023b2                  _LCD_Print
-                  0x0023cc                  _LCD_SetCursor
-                  0x0023ee                  _LCD_Init
-                  0x00243e                  _Update_LCD_Data
-                  0x0025ec                  _party_mode
-                  0x0026f6                  _credits_mode
-                  0x002864                  _setupTimer1
-                  0x002884                  _UART1_Init
-                  0x0028cc                  _UART1_Write
-                  0x0028e4                  _UART1_WriteString
-                  0x0028fe                  _ADC_Init
-                  0x002928                  _ADC_Read
-                  0x00295a                  _get_json_val
-                  0x002a40                  _process_json_config
-                  0x002bf0                  _print_json_array
-                  0x002c86                  _send_monitoring_message
-                  0x002d64                  _main
-                  0x0030d6                  _ADC1_Initialize
-                  0x003104                  _ADC1_SetInterruptHandler
-                  0x00312c                  _ADC1_Start
-                  0x003134                  _ADC1_Stop
-                  0x00313c                  _ADC1_ConversionResultBufferGet
-                  0x003178                  _PIN_MANAGER_Initialize
-                  0x003248                  _CLOCK_Initialize
-                  0x00328e                  _POTENTIOMETER2_Get
-                  0x00329e                  _POTENTIOMETER2_VoltageGet
-                  0x0032e2                  ___delay32
-                  0x0032fe                  _where_was_i
-                  0x00330e                  _SYSTEM_Initialize
-                  0x00331c                  _INTERRUPT_Initialize
+                  0x001fa4                  _I2C2_ClearErrors
+                  0x001fb0                  _I2C2_WaitIdle
+                  0x001fdc                  _I2C2_WaitFlagClear
+                  0x002006                  _I2C2_BusRecovery
+                  0x00203e                  _I2C2_Init
+                  0x00206e                  _I2C2_Start
+                  0x002088                  _I2C2_Stop
+                  0x0020ac                  _I2C2_WriteByte
+                  0x002120                  _I2C2_ReadByte
+                  0x00219a                  _SD_ReadSensorsOnce
+                  0x002258                  _SD_ReadSensors
+                  0x002290                  _I2C2_AddressResponds
+                  0x0022b4                  _I2C2_ScanBus
+                  0x002378                  _LCD_Pulse
+                  0x00238e                  _LCD_Command
+                  0x0023b0                  _LCD_Char
+                  0x0023d2                  _LCD_Print
+                  0x0023ec                  _LCD_SetCursor
+                  0x00240e                  _LCD_Init
+                  0x00245e                  _Update_LCD_Data
+                  0x00268e                  _party_mode
+                  0x002798                  _credits_mode
+                  0x002906                  _setupTimer1
+                  0x002926                  _UART1_Init
+                  0x00296e                  _UART1_Write
+                  0x002986                  _UART1_WriteString
+                  0x0029a0                  _ADC_Init
+                  0x0029ca                  _ADC_Read
+                  0x0029fc                  _get_json_val
+                  0x002ae2                  _process_json_config
+                  0x002c92                  _print_json_array
+                  0x002d28                  _send_monitoring_message
+                  0x002e06                  _main
+                  0x003174                  _ADC1_Initialize
+                  0x0031a2                  _ADC1_SetInterruptHandler
+                  0x0031ca                  _ADC1_Start
+                  0x0031d2                  _ADC1_Stop
+                  0x0031da                  _ADC1_ConversionResultBufferGet
+                  0x003216                  _PIN_MANAGER_Initialize
+                  0x0032e6                  _CLOCK_Initialize
+                  0x00332c                  _POTENTIOMETER2_Get
+                  0x00333c                  _POTENTIOMETER2_VoltageGet
+                  0x003380                  ___delay32
+                  0x00339c                  _where_was_i
+                  0x0033ac                  _SYSTEM_Initialize
+                  0x0033ba                  _INTERRUPT_Initialize
                   0x0abf00                  __FSEC.sec
 
 External Symbols in Program Memory (by name):
 
-                  0x00313c                  _ADC1_ConversionResultBufferGet
-                  0x0030d6                  _ADC1_Initialize
-                  0x003104                  _ADC1_SetInterruptHandler
-                  0x00312c                  _ADC1_Start
-                  0x003134                  _ADC1_Stop
-                  0x0028fe                  _ADC_Init
-                  0x002928                  _ADC_Read
-                  0x003248                  _CLOCK_Initialize
-                  0x002270                  _I2C2_AddressResponds
-                  0x001fe6                  _I2C2_BusRecovery
-                  0x001f84                  _I2C2_ClearErrors
-                  0x00201e                  _I2C2_Init
-                  0x002100                  _I2C2_ReadByte
-                  0x002294                  _I2C2_ScanBus
-                  0x00204e                  _I2C2_Start
-                  0x002068                  _I2C2_Stop
-                  0x001fbc                  _I2C2_WaitFlagClear
-                  0x001f90                  _I2C2_WaitIdle
-                  0x00208c                  _I2C2_WriteByte
-                  0x00331c                  _INTERRUPT_Initialize
-                  0x002390                  _LCD_Char
-                  0x00236e                  _LCD_Command
-                  0x0023ee                  _LCD_Init
-                  0x0023b2                  _LCD_Print
-                  0x002358                  _LCD_Pulse
-                  0x0023cc                  _LCD_SetCursor
-                  0x003178                  _PIN_MANAGER_Initialize
-                  0x00328e                  _POTENTIOMETER2_Get
-                  0x00329e                  _POTENTIOMETER2_VoltageGet
-                  0x002238                  _SD_ReadSensors
-                  0x00217a                  _SD_ReadSensorsOnce
-                  0x00330e                  _SYSTEM_Initialize
-                  0x002884                  _UART1_Init
-                  0x0028cc                  _UART1_Write
-                  0x0028e4                  _UART1_WriteString
-                  0x00243e                  _Update_LCD_Data
+                  0x0031da                  _ADC1_ConversionResultBufferGet
+                  0x003174                  _ADC1_Initialize
+                  0x0031a2                  _ADC1_SetInterruptHandler
+                  0x0031ca                  _ADC1_Start
+                  0x0031d2                  _ADC1_Stop
+                  0x0029a0                  _ADC_Init
+                  0x0029ca                  _ADC_Read
+                  0x0032e6                  _CLOCK_Initialize
+                  0x002290                  _I2C2_AddressResponds
+                  0x002006                  _I2C2_BusRecovery
+                  0x001fa4                  _I2C2_ClearErrors
+                  0x00203e                  _I2C2_Init
+                  0x002120                  _I2C2_ReadByte
+                  0x0022b4                  _I2C2_ScanBus
+                  0x00206e                  _I2C2_Start
+                  0x002088                  _I2C2_Stop
+                  0x001fdc                  _I2C2_WaitFlagClear
+                  0x001fb0                  _I2C2_WaitIdle
+                  0x0020ac                  _I2C2_WriteByte
+                  0x0033ba                  _INTERRUPT_Initialize
+                  0x0023b0                  _LCD_Char
+                  0x00238e                  _LCD_Command
+                  0x00240e                  _LCD_Init
+                  0x0023d2                  _LCD_Print
+                  0x002378                  _LCD_Pulse
+                  0x0023ec                  _LCD_SetCursor
+                  0x003216                  _PIN_MANAGER_Initialize
+                  0x00332c                  _POTENTIOMETER2_Get
+                  0x00333c                  _POTENTIOMETER2_VoltageGet
+                  0x002258                  _SD_ReadSensors
+                  0x00219a                  _SD_ReadSensorsOnce
+                  0x0033ac                  _SYSTEM_Initialize
+                  0x002926                  _UART1_Init
+                  0x00296e                  _UART1_Write
+                  0x002986                  _UART1_WriteString
+                  0x00245e                  _Update_LCD_Data
                   0x000354                  __DefaultInterrupt
                   0x0abf00                  __FSEC.sec
                   0x0002aa                  __T1Interrupt
@@ -486,7 +486,7 @@ External Symbols in Program Memory (by name):
                   0x000418                  ___addsf3
                   0x000418                  ___addsf3x
                   0x0010de                  ___cvt_u
-                  0x0032e2                  ___delay32
+                  0x003380                  ___delay32
                   0x001cce                  ___divdi3
                   0x0005e2                  ___divsf3
                   0x0005e2                  ___divsf3x
@@ -542,19 +542,19 @@ External Symbols in Program Memory (by name):
                   0x000900                  __unpackdnrmf
                   0x000a4a                  __unpackf
                   0x000ba8                  _atoi
-                  0x0026f6                  _credits_mode
-                  0x00295a                  _get_json_val
-                  0x002d64                  _main
+                  0x002798                  _credits_mode
+                  0x0029fc                  _get_json_val
+                  0x002e06                  _main
                   0x001824                  _memchr
                   0x001884                  _memcmp
                   0x000bf4                  _memcpy
                   0x0018a0                  _memset
-                  0x0025ec                  _party_mode
-                  0x002bf0                  _print_json_array
-                  0x002a40                  _process_json_config
+                  0x00268e                  _party_mode
+                  0x002c92                  _print_json_array
+                  0x002ae2                  _process_json_config
                   0x000c0c                  _rand
-                  0x002c86                  _send_monitoring_message
-                  0x002864                  _setupTimer1
+                  0x002d28                  _send_monitoring_message
+                  0x002906                  _setupTimer1
                   0x000c02                  _srand
                   0x000c24                  _strcat
                   0x001a12                  _strchr
@@ -564,7 +564,7 @@ External Symbols in Program Memory (by name):
                   0x000f14                  _strstr
                   0x001a7c                  _tolower
                   0x001a8a                  _toupper
-                  0x0032fe                  _where_was_i
+                  0x00339c                  _where_was_i
 
 Memory Configuration
 
@@ -892,7 +892,7 @@ __FDEVOPT1
 .comment
  *(.comment)
 
-.debug_info       0x000000       0x7a18
+.debug_info       0x000000       0x7a05
  *(.debug_info)
  .debug_info      0x000000        0xc12 build/default/production/mcc_generated_files/system.o
  .debug_info      0x000c12         0x9c build/default/production/mcc_generated_files/where_was_i.o
@@ -902,26 +902,26 @@ __FDEVOPT1
  .debug_info      0x00181e        0xf32 build/default/production/mcc_generated_files/adc1.o
  .debug_info      0x002750        0x43c build/default/production/mcc_generated_files/traps.o
  .debug_info      0x002b8c        0xad7 build/default/production/mcc_generated_files/potentiometer2.o
- .debug_info      0x003663       0x3895 build/default/production/main.o
- .debug_info      0x006ef8         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(fixsfsi.DA_o)
- .debug_info      0x006f85         0x90 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(fixunssfsi.DA_o)
- .debug_info      0x007015         0x8f c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatsisf.DA_o)
- .debug_info      0x0070a4         0x91 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatunsisf.DA_o)
- .debug_info      0x007135         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.DA_o)
- .debug_info      0x0071c2         0x9d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(addsf3x.DA_o)
- .debug_info      0x00725f         0x9d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(divsf3x.DA_o)
- .debug_info      0x0072fc         0x9d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsf3x.DA_o)
- .debug_info      0x007399         0xa0 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(dnrmpackfx.DA_o)
- .debug_info      0x007439         0xa2 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(unpackdnrmfx.DA_o)
- .debug_info      0x0074db         0x9c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(typefx.DA_o)
- .debug_info      0x007577         0x9f c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(propnanfx.DA_o)
- .debug_info      0x007616         0x9d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(spackfx.DA_o)
- .debug_info      0x0076b3         0x9e c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(unpackfx.DA_o)
- .debug_info      0x007751         0x8f c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatdisf.DA_o)
- .debug_info      0x0077e0         0x91 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatundisf.DA_o)
- .debug_info      0x007871         0x8b c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(fpack.DA_o)
- .debug_info      0x0078fc         0x90 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.DA_o)
- .debug_info      0x00798c         0x8c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
+ .debug_info      0x003663       0x3882 build/default/production/main.o
+ .debug_info      0x006ee5         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(fixsfsi.DA_o)
+ .debug_info      0x006f72         0x90 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(fixunssfsi.DA_o)
+ .debug_info      0x007002         0x8f c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatsisf.DA_o)
+ .debug_info      0x007091         0x91 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatunsisf.DA_o)
+ .debug_info      0x007122         0x8d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.DA_o)
+ .debug_info      0x0071af         0x9d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(addsf3x.DA_o)
+ .debug_info      0x00724c         0x9d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(divsf3x.DA_o)
+ .debug_info      0x0072e9         0x9d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsf3x.DA_o)
+ .debug_info      0x007386         0xa0 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(dnrmpackfx.DA_o)
+ .debug_info      0x007426         0xa2 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(unpackdnrmfx.DA_o)
+ .debug_info      0x0074c8         0x9c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(typefx.DA_o)
+ .debug_info      0x007564         0x9f c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(propnanfx.DA_o)
+ .debug_info      0x007603         0x9d c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(spackfx.DA_o)
+ .debug_info      0x0076a0         0x9e c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(unpackfx.DA_o)
+ .debug_info      0x00773e         0x8f c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatdisf.DA_o)
+ .debug_info      0x0077cd         0x91 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatundisf.DA_o)
+ .debug_info      0x00785e         0x8b c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(fpack.DA_o)
+ .debug_info      0x0078e9         0x90 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.DA_o)
+ .debug_info      0x007979         0x8c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
  *(.gnu.linkonce.wi.*)
 
 .debug_abbrev     0x000000        0x923
@@ -957,7 +957,7 @@ __FDEVOPT1
  .debug_abbrev    0x0008fb         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.DA_o)
  .debug_abbrev    0x00090f         0x14 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
 
-.debug_line       0x000000       0x1509
+.debug_line       0x000000       0x1517
  *(.debug_line)
  .debug_line      0x000000        0x120 build/default/production/mcc_generated_files/system.o
  .debug_line      0x000120         0x55 build/default/production/mcc_generated_files/where_was_i.o
@@ -968,30 +968,30 @@ __FDEVOPT1
  .debug_line      0x000583         0x1a build/default/production/mcc_generated_files/mcc.o
  .debug_line      0x00059d        0x152 build/default/production/mcc_generated_files/traps.o
  .debug_line      0x0006ef        0x12e build/default/production/mcc_generated_files/potentiometer2.o
- .debug_line      0x00081d        0x3de build/default/production/main.o
- .debug_line      0x000bfb         0x1a build/default/production/configurationbits.o
- .debug_line      0x000c15         0x56 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(fixsfsi.DA_o)
- .debug_line      0x000c6b         0x53 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(fixunssfsi.DA_o)
- .debug_line      0x000cbe         0x3a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatsisf.DA_o)
- .debug_line      0x000cf8         0x3b c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatunsisf.DA_o)
- .debug_line      0x000d33         0x4a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.DA_o)
- .debug_line      0x000d7d        0x136 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(addsf3x.DA_o)
- .debug_line      0x000eb3        0x124 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(divsf3x.DA_o)
- .debug_line      0x000fd7         0xcc c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsf3x.DA_o)
- .debug_line      0x0010a3         0x72 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(dnrmpackfx.DA_o)
- .debug_line      0x001115         0x7a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(unpackdnrmfx.DA_o)
- .debug_line      0x00118f         0x5e c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(typefx.DA_o)
- .debug_line      0x0011ed         0x51 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(propnanfx.DA_o)
- .debug_line      0x00123e         0x98 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(spackfx.DA_o)
- .debug_line      0x0012d6         0x79 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(unpackfx.DA_o)
- .debug_line      0x00134f         0x1a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(errno.DA_o)
- .debug_line      0x001369         0x47 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatdisf.DA_o)
- .debug_line      0x0013b0         0x6c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatundisf.DA_o)
- .debug_line      0x00141c         0x5a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(fpack.DA_o)
- .debug_line      0x001476         0x59 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.DA_o)
- .debug_line      0x0014cf         0x3a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
+ .debug_line      0x00081d        0x3ec build/default/production/main.o
+ .debug_line      0x000c09         0x1a build/default/production/configurationbits.o
+ .debug_line      0x000c23         0x56 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(fixsfsi.DA_o)
+ .debug_line      0x000c79         0x53 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(fixunssfsi.DA_o)
+ .debug_line      0x000ccc         0x3a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatsisf.DA_o)
+ .debug_line      0x000d06         0x3b c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatunsisf.DA_o)
+ .debug_line      0x000d41         0x4a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(funpack.DA_o)
+ .debug_line      0x000d8b        0x136 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(addsf3x.DA_o)
+ .debug_line      0x000ec1        0x124 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(divsf3x.DA_o)
+ .debug_line      0x000fe5         0xcc c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsf3x.DA_o)
+ .debug_line      0x0010b1         0x72 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(dnrmpackfx.DA_o)
+ .debug_line      0x001123         0x7a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(unpackdnrmfx.DA_o)
+ .debug_line      0x00119d         0x5e c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(typefx.DA_o)
+ .debug_line      0x0011fb         0x51 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(propnanfx.DA_o)
+ .debug_line      0x00124c         0x98 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(spackfx.DA_o)
+ .debug_line      0x0012e4         0x79 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(unpackfx.DA_o)
+ .debug_line      0x00135d         0x1a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(errno.DA_o)
+ .debug_line      0x001377         0x47 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatdisf.DA_o)
+ .debug_line      0x0013be         0x6c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(floatundisf.DA_o)
+ .debug_line      0x00142a         0x5a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(fpack.DA_o)
+ .debug_line      0x001484         0x59 c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(extendsfdf.DA_o)
+ .debug_line      0x0014dd         0x3a c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
 
-.debug_frame      0x000000        0x7a8
+.debug_frame      0x000000        0x7d4
  *(.debug_frame)
  .debug_frame     0x000000         0x2e build/default/production/mcc_generated_files/system.o
  .debug_frame     0x00002e         0x2e build/default/production/mcc_generated_files/pin_manager.o
@@ -1000,7 +1000,7 @@ __FDEVOPT1
  .debug_frame     0x0000b8         0xca build/default/production/mcc_generated_files/adc1.o
  .debug_frame     0x000182        0x17e build/default/production/mcc_generated_files/traps.o
  .debug_frame     0x000300         0x48 build/default/production/mcc_generated_files/potentiometer2.o
- .debug_frame     0x000348        0x460 build/default/production/main.o
+ .debug_frame     0x000348        0x48c build/default/production/main.o
 
 .debug_str        0x000000        0x2b8
  *(.debug_str)
@@ -3484,75 +3484,75 @@ mcc_generated_files/where_was_i.s.scn1
  .ivt._U1RXInterrupt
                   0x00002a          0x2 build/default/production/main.o
 
-.const              0x9d8a        0x1fa load address 0x001d8a  
- .const             0x9d8a        0x1fa build/default/production/main.o
+.const              0x9d8a        0x21a load address 0x001d8a  
+ .const             0x9d8a        0x21a build/default/production/main.o
 
-.text             0x001f84       0x1266
- .text            0x001f84       0x1152 build/default/production/main.o
-                  0x001f84                  _I2C2_ClearErrors
-                  0x001f90                  _I2C2_WaitIdle
-                  0x001fbc                  _I2C2_WaitFlagClear
-                  0x001fe6                  _I2C2_BusRecovery
-                  0x00201e                  _I2C2_Init
-                  0x00204e                  _I2C2_Start
-                  0x002068                  _I2C2_Stop
-                  0x00208c                  _I2C2_WriteByte
-                  0x002100                  _I2C2_ReadByte
-                  0x00217a                  _SD_ReadSensorsOnce
-                  0x002238                  _SD_ReadSensors
-                  0x002270                  _I2C2_AddressResponds
-                  0x002294                  _I2C2_ScanBus
-                  0x002358                  _LCD_Pulse
-                  0x00236e                  _LCD_Command
-                  0x002390                  _LCD_Char
-                  0x0023b2                  _LCD_Print
-                  0x0023cc                  _LCD_SetCursor
-                  0x0023ee                  _LCD_Init
-                  0x00243e                  _Update_LCD_Data
-                  0x0025ec                  _party_mode
-                  0x0026f6                  _credits_mode
-                  0x002864                  _setupTimer1
-                  0x002884                  _UART1_Init
-                  0x0028cc                  _UART1_Write
-                  0x0028e4                  _UART1_WriteString
-                  0x0028fe                  _ADC_Init
-                  0x002928                  _ADC_Read
-                  0x00295a                  _get_json_val
-                  0x002a40                  _process_json_config
-                  0x002bf0                  _print_json_array
-                  0x002c86                  _send_monitoring_message
-                  0x002d64                  _main
- .text            0x0030d6         0xa2 build/default/production/mcc_generated_files/adc1.o
-                  0x0030d6                  _ADC1_Initialize
-                  0x0030fe                  _ADC1_CallBack
-                  0x003104                  _ADC1_SetInterruptHandler
-                  0x003110                  _ADC1_Tasks
-                  0x00312c                  _ADC1_Start
-                  0x003134                  _ADC1_Stop
-                  0x00313c                  _ADC1_ConversionResultBufferGet
- .text            0x003178         0x72 build/default/production/mcc_generated_files/pin_manager.o
-                  0x003178                  _PIN_MANAGER_Initialize
+.text             0x001fa4       0x12e4
+ .text            0x001fa4       0x11d0 build/default/production/main.o
+                  0x001fa4                  _I2C2_ClearErrors
+                  0x001fb0                  _I2C2_WaitIdle
+                  0x001fdc                  _I2C2_WaitFlagClear
+                  0x002006                  _I2C2_BusRecovery
+                  0x00203e                  _I2C2_Init
+                  0x00206e                  _I2C2_Start
+                  0x002088                  _I2C2_Stop
+                  0x0020ac                  _I2C2_WriteByte
+                  0x002120                  _I2C2_ReadByte
+                  0x00219a                  _SD_ReadSensorsOnce
+                  0x002258                  _SD_ReadSensors
+                  0x002290                  _I2C2_AddressResponds
+                  0x0022b4                  _I2C2_ScanBus
+                  0x002378                  _LCD_Pulse
+                  0x00238e                  _LCD_Command
+                  0x0023b0                  _LCD_Char
+                  0x0023d2                  _LCD_Print
+                  0x0023ec                  _LCD_SetCursor
+                  0x00240e                  _LCD_Init
+                  0x00245e                  _Update_LCD_Data
+                  0x00268e                  _party_mode
+                  0x002798                  _credits_mode
+                  0x002906                  _setupTimer1
+                  0x002926                  _UART1_Init
+                  0x00296e                  _UART1_Write
+                  0x002986                  _UART1_WriteString
+                  0x0029a0                  _ADC_Init
+                  0x0029ca                  _ADC_Read
+                  0x0029fc                  _get_json_val
+                  0x002ae2                  _process_json_config
+                  0x002c92                  _print_json_array
+                  0x002d28                  _send_monitoring_message
+                  0x002e06                  _main
+ .text            0x003174         0xa2 build/default/production/mcc_generated_files/adc1.o
+                  0x003174                  _ADC1_Initialize
+                  0x00319c                  _ADC1_CallBack
+                  0x0031a2                  _ADC1_SetInterruptHandler
+                  0x0031ae                  _ADC1_Tasks
+                  0x0031ca                  _ADC1_Start
+                  0x0031d2                  _ADC1_Stop
+                  0x0031da                  _ADC1_ConversionResultBufferGet
+ .text            0x003216         0x72 build/default/production/mcc_generated_files/pin_manager.o
+                  0x003216                  _PIN_MANAGER_Initialize
 
-.dinit            0x0031ea         0x5e
- .dinit           0x0031ea         0x5e data_init
+.dinit            0x003288         0x5e
+ .dinit           0x003288         0x5e data_init
 
-.text             0x003248         0x9a
- .text            0x003248         0x46 build/default/production/mcc_generated_files/clock.o
-                  0x003248                  _CLOCK_Initialize
- .text            0x00328e         0x38 build/default/production/mcc_generated_files/potentiometer2.o
-                  0x00328e                  _POTENTIOMETER2_Get
-                  0x00329e                  _POTENTIOMETER2_VoltageGet
- .text            0x0032c6         0x1c build/default/production/mcc_generated_files/traps.o
-                  0x0032c6                  _TRAPS_halt_on_error
+.text             0x0032e6         0x9a
+ .text            0x0032e6         0x46 build/default/production/mcc_generated_files/clock.o
+                  0x0032e6                  _CLOCK_Initialize
+ .text            0x00332c         0x38 build/default/production/mcc_generated_files/potentiometer2.o
+                  0x00332c                  _POTENTIOMETER2_Get
+                  0x00333c                  _POTENTIOMETER2_VoltageGet
+ .text            0x003364         0x1c build/default/production/mcc_generated_files/traps.o
+                  0x003364                  _TRAPS_halt_on_error
 
-.init.delay32     0x0032e2         0x1c
- .init.delay32    0x0032e2         0x1c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(delay32da.Meo)
-                  0x0032e2                  ___delay32
+.init.delay32     0x003380         0x1c
+ .init.delay32    0x003380         0x1c c:/program files/microchip/xc16/v2.10/bin/bin/../../lib\libc99-pic30-elf.a(delay32da.Meo)
+                  0x003380                  ___delay32
 
-.text             0x0032fe         0x24
- .text            0x0032fe         0x10 build/default/production/mcc_generated_files/where_was_i.o
-                  0x0032fe                  _where_was_i
- .text            0x00330e          0xe build/default/production/mcc_generated_files/system.o
-                  0x00330e                  _SYSTEM_Initialize
- .text            0x00331c          0x6 build/default/production/mcc_generated_files/interrupt_manager.o
-                  0x00331c                  _INTERRUPT_Initialize
+.text             0x00339c         0x24
+ .text            0x00339c         0x10 build/default/production/mcc_generated_files/where_was_i.o
+                  0x00339c                  _where_was_i
+ .text            0x0033ac          0xe build/default/production/mcc_generated_files/system.o
+                  0x0033ac                  _SYSTEM_Initialize
+ .text            0x0033ba          0x6 build/default/production/mcc_generated_files/interrupt_manager.o
+                  0x0033ba                  _INTERRUPT_Initialize

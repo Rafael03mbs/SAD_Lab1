@@ -366,7 +366,8 @@ void LCD_Init(void) {
 }
 
 void Update_LCD_Data(unsigned int ax, int ay, unsigned int az,
-                     int d6, int d7, int db, int dv) {
+                     int d6, int d7, int db, int dv,
+                     unsigned int sd0, unsigned int sd1) {
     char line1[32], line2[32], temp[16];
     int i;
 
@@ -393,7 +394,7 @@ void Update_LCD_Data(unsigned int ax, int ay, unsigned int az,
     line2[0] = '\0';
     if (alert_triggered) {
         sprintf(line2, "ALERT! V:%d", dv);
-    } else if (!cfg_D6 && !cfg_D7 && !cfg_DB && !cfg_DV) {
+    } else if (!cfg_D6 && !cfg_D7 && !cfg_DB && !cfg_DV && !cfg_SD0 && !cfg_SD1) {
         strcat(line2, "Sem Digital ");
     } else {
         if (cfg_D6) {
@@ -409,8 +410,24 @@ void Update_LCD_Data(unsigned int ax, int ay, unsigned int az,
             strcat(line2, temp);
         }
         if (cfg_DV) {
-            sprintf(temp, "V:%d", dv);
+            sprintf(temp, "V:%d ", dv);
             strcat(line2, temp);
+        }
+        if (cfg_SD0) {
+            if (sd0 == SD_READ_ERROR) {
+                strcat(line2, "S0:ERR ");
+            } else {
+                sprintf(temp, "S0:%u ", sd0);
+                strcat(line2, temp);
+            }
+        }
+        if (cfg_SD1) {
+            if (sd1 == SD_READ_ERROR) {
+                strcat(line2, "S1:ERR ");
+            } else {
+                sprintf(temp, "S1:%u ", sd1);
+                strcat(line2, temp);
+            }
         }
     }
     for (i = strlen(line2); i < 16; i++) line2[i] = ' ';
@@ -986,7 +1003,7 @@ int main(int argc, char** argv) {
                 }
             }
 
-            Update_LCD_Data(cur_Ax, cur_Ay, cur_Az, cur_D6, cur_D7, cur_DB, cur_DV);
+            Update_LCD_Data(cur_Ax, cur_Ay, cur_Az, cur_D6, cur_D7, cur_DB, cur_DV, cur_SD0, cur_SD1);
         }
     }
 
