@@ -32,7 +32,7 @@ void receiveEvent(int howMany)
   }
 }
 
-void requestEvent(int howMany)
+void requestEvent()
 {
   Wire.write(0x40);
   Wire.write(byte(valueA0>>8));

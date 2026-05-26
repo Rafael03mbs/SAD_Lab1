@@ -23,12 +23,15 @@
 
 #define MAX_SAMPLES 50
 #define RX_BUF_SIZE 256
+#define TIMER_TICKS_PER_SECOND 10
 
-#define I2C_TIMEOUT 4000
+#define I2C_TIMEOUT 20000
 #define SD_I2C_ADDR 0x48
 #define SD_ACQUIRE_CMD 0xAC
 #define SD_READY_STATUS 0x40
 #define SD_READ_ERROR 0xFFFF
+#define I2C_DIAG_ON_BOOT 0
+#define I2C_BUS_RECOVERY_ON_INIT 1
 
 // ----- LCD Pin Definitions -----
 #define LCD_DATA  LATE
@@ -40,8 +43,8 @@
 int cfg_Ax = 0;  // AN5 - Potentiometer
 int cfg_Ay = 0;  // AN4 - Temperature sensor
 int cfg_Az = 0;  // AN1 - LDR
-int cfg_SD0 = 1; // Arduino A0 via I2C
-int cfg_SD1 = 1; // Arduino A1 via I2C
+int cfg_SD0 = 0; // Arduino A0 via I2C
+int cfg_SD1 = 0; // Arduino A1 via I2C
 int cfg_D6 = 0;  // RD6
 int cfg_D7 = 0;  // RD7
 int cfg_DB = 0;  // Bidirectional channel RA7
@@ -49,7 +52,7 @@ int cfg_DV = 0;  // Virtual channel
 int cfg_b  = 0;  // RA7: 0=out, 1=in
 int cfg_v  = 0;  // 1 = virtual channel configured
 int cfg_n  = 1;  // Number of samples per message
-int cfg_p  = 1;  // Sampling period in Timer1 ticks
+int cfg_p  = TIMER_TICKS_PER_SECOND;  // Sampling period in Timer1 ticks
 int cfg_alert_val = -1;
 
 // ----- UART RX Buffer -----
@@ -69,12 +72,15 @@ int buf_DB[MAX_SAMPLES];
 int buf_DV[MAX_SAMPLES];
 volatile int sample_count = 0;
 
+
+
 // ----- Timer and flags -----
 volatile int time_tick = 0;
 volatile int sample_flag = 0;
 int alert_triggered = 0;
+int i2c2_ready = 0;
 
-// ----- I2C Digital Sensor -----
+/// ----- I2C Digital Sensor -----
 void I2C2_ClearErrors(void) {
     I2C2STATbits.I2COV = 0;
     I2C2STATbits.IWCOL = 0;
@@ -97,22 +103,48 @@ int I2C2_WaitFlagClear(volatile unsigned int *reg, unsigned int mask) {
     return 1;
 }
 
-void I2C2_Init(void) {
-    PMD3bits.I2C2MD = 0;
-    I2C2CONLbits.I2CEN = 0;
+// Manual bus recovery: toggle SCL to free a stuck SDA line
+void I2C2_BusRecovery(void) {
+    I2C2CONLbits.I2CEN = 0;    // Disable I2C module
+    TRISAbits.TRISA2 = 0;      // SCL as output
+    TRISAbits.TRISA3 = 1;      // SDA as input
+    int i;
+    for (i = 0; i < 9; i++) {  // Clock up to 9 pulses
+        LATAbits.LATA2 = 0;
+        __delay_us(10);
+        LATAbits.LATA2 = 1;
+        __delay_us(10);
+        if (PORTAbits.RA3 == 1) break;  // SDA released
+    }
+    TRISAbits.TRISA2 = 1;      // Return SCL to input (open-drain)
+}
 
-    TRISAbits.TRISA2 = 1;      // SCL2 / RA2, Explorer pin 58
-    TRISAbits.TRISA3 = 1;      // SDA2 / RA3, Explorer pin 59
+void I2C2_Init(void) {
+    PMD3bits.I2C2MD = 0;       // Enable power to the I2C2 peripheral
+    I2C2CONLbits.I2CEN = 0;    // Disable I2C module for configuration
+    i2c2_ready = 0;
+
+#if I2C_BUS_RECOVERY_ON_INIT
+    // 9-pulse SCL bus recovery to release stuck SDA lines on reset/power-on
+    I2C2_BusRecovery();
+#endif
+
+    // Configure SCL2 (RA2) and SDA2 (RA3) as digital inputs with open-drain enabled
+    TRISAbits.TRISA2 = 1;
+    TRISAbits.TRISA3 = 1;
     ODCAbits.ODCA2 = 1;
     ODCAbits.ODCA3 = 1;
 
     I2C2CONL = 0x0000;
     I2C2CONH = 0x0000;
-    I2C2BRG = 39;              // 100 kHz with FCY = 4 MHz
+    I2C2BRG = 39;              // 100 kHz speed with FCY = 4 MHz 
     I2C2_ClearErrors();
+    I2C2STAT = 0x0000;         // Reset all status bits
 
-    I2C2CONLbits.DISSLW = 1;
-    I2C2CONLbits.I2CEN = 1;
+    I2C2CONLbits.DISSLW = 1;   // Disable slew rate control (standard speed)
+    I2C2CONLbits.I2CEN = 1;    // Enable module
+    i2c2_ready = 1;
+    __delay_ms(5);             // Let the bus stabilize
 }
 
 int I2C2_Start(void) {
@@ -156,12 +188,17 @@ int I2C2_WriteByte(unsigned char value) {
 int I2C2_ReadByte(unsigned char *value, int send_nack) {
     unsigned int timeout = I2C_TIMEOUT;
 
+    if (!I2C2_WaitIdle()) return 0;   // Wait for bus idle before enabling receive
+
     I2C2CONLbits.RCEN = 1;
     while (!I2C2STATbits.RBF) {
         if (--timeout == 0) return 0;
     }
 
     *value = I2C2RCV;
+
+    if (!I2C2_WaitIdle()) return 0;   // Wait idle before sending ACK/NACK
+
     I2C2CONLbits.ACKDT = send_nack ? 1 : 0;
     I2C2CONLbits.ACKEN = 1;
 
@@ -172,8 +209,7 @@ int I2C2_ReadByte(unsigned char *value, int send_nack) {
 
     return 1;
 }
-
-int SD_ReadSensors(unsigned int *sd0, unsigned int *sd1) {
+int SD_ReadSensorsOnce(unsigned int *sd0, unsigned int *sd1) {
     unsigned char rx[5];
 
     if (!I2C2_Start()) goto fail;
@@ -181,7 +217,9 @@ int SD_ReadSensors(unsigned int *sd0, unsigned int *sd1) {
     if (!I2C2_WriteByte(SD_ACQUIRE_CMD)) goto fail;
     if (!I2C2_Stop()) goto fail;
 
-    __delay_us(250);
+    // Give the Arduino enough time to complete analogRead in its receiveEvent()
+    // (analogRead ~110us x 2 channels + loop overhead + I2C ISR latency)
+    __delay_ms(5);
 
     if (!I2C2_Start()) goto fail;
     if (!I2C2_WriteByte((SD_I2C_ADDR << 1) | 1)) goto fail;
@@ -201,6 +239,70 @@ fail:
     I2C2_ClearErrors();
     I2C2_Stop();
     return 0;
+}
+
+int SD_ReadSensors(unsigned int *sd0, unsigned int *sd1) {
+    // Retry up to 3 times with bus recovery on persistent failure
+    int attempt;
+
+    if (!i2c2_ready) {
+        I2C2_Init();
+    }
+
+    for (attempt = 0; attempt < 3; attempt++) {
+        if (SD_ReadSensorsOnce(sd0, sd1)) return 1;
+        // Full re-init between retries: bus recovery + module reset
+        I2C2_Init();
+        __delay_ms(5);
+    }
+    return 0;
+}
+
+int I2C2_AddressResponds(unsigned char addr) {
+    int ack = 0;
+
+    if (I2C2_Start()) {
+        ack = I2C2_WriteByte((addr << 1) | 0);
+    }
+
+    I2C2_Stop();
+    __delay_ms(1);
+    return ack;
+}
+
+int I2C2_ScanBus(char *result, unsigned int result_size) {
+    unsigned char addr;
+    int found = 0;
+    int truncated = 0;
+
+    if (result_size == 0) return 0;
+    result[0] = '\0';
+
+    for (addr = 0x08; addr <= 0x77; addr++) {
+        I2C2_ClearErrors();
+
+        if (I2C2_AddressResponds(addr)) {
+            char item[8];
+            unsigned int used = strlen(result);
+
+            sprintf(item, "%s0x%02X", found ? "," : "", addr);
+            if ((used + strlen(item)) < result_size) {
+                strcat(result, item);
+            } else {
+                truncated = 1;
+            }
+            found++;
+        }
+    }
+
+    if (found == 0) {
+        strncpy(result, "NONE", result_size - 1);
+        result[result_size - 1] = '\0';
+    } else if (truncated && (strlen(result) + 4) < result_size) {
+        strcat(result, ",...");
+    }
+
+    return found;
 }
 
 // ----- LCD Functions -----
@@ -337,7 +439,7 @@ void party_mode(void) {
     }
     __delay_ms(50);
 
-    TRISA = (TRISA & 0xFF00) | 0x0080;
+    TRISA = (TRISA & 0xFF00) | 0x008C;  // Keep RA2/RA3 as input (I2C), RA7 as input
 
     while (1) {
         LATA = (LATA & 0xFF80) | (rand() & 0x007F);
@@ -367,7 +469,7 @@ void credits_mode(void) {
     unsigned int old_trisa = TRISA;
     unsigned int old_lata = LATA;
 
-    TRISA = (TRISA & 0xFF00) | 0x0080;
+    TRISA = (TRISA & 0xFF00) | 0x008C;  // Keep RA2/RA3 as input (I2C), RA7 as input
 
     const char* nomes[] = {
         "Iuri Mocas",
@@ -581,6 +683,8 @@ int get_json_val(const char *json, const char *key, int default_val) {
 }
 
 void process_json_config(const char *json) {
+    int old_sd_enabled = cfg_SD0 || cfg_SD1;
+
     cfg_b = get_json_val(json, "b", cfg_b);
     TRISAbits.TRISA7 = cfg_b;
 
@@ -616,12 +720,19 @@ void process_json_config(const char *json) {
     cfg_DB = get_json_val(json, "DB", cfg_DB);
     cfg_DV = get_json_val(json, "DV", cfg_DV);
 
-    cfg_p = get_json_val(json, "p", cfg_p);
+    int new_p = get_json_val(json, "p", -1);
+    if (new_p >= 0) {
+        cfg_p = new_p * TIMER_TICKS_PER_SECOND;
+    }
     cfg_alert_val = get_json_val(json, "alert", cfg_alert_val);
 
     int new_n = get_json_val(json, "n", cfg_n);
     if (new_n > 0 && new_n <= MAX_SAMPLES) {
         cfg_n = new_n;
+    }
+
+    if (!old_sd_enabled && (cfg_SD0 || cfg_SD1)) {
+        I2C2_Init();
     }
 }
 
@@ -665,7 +776,9 @@ void send_monitoring_message(void) {
 // ----- Main -----
 int main(int argc, char** argv) {
     ANSD = 1;
-    TRISA = 0x0000;
+    // Preserve RA2/RA3 as inputs — they are I2C2 SCL/SDA pins.
+    // Driving them low as outputs would lock the I2C bus.
+    TRISA = 0x000C;            // RA2=1 (input), RA3=1 (input), rest=output
     PORTA = 0x0000;
 
     TRISDbits.TRISD6 = 1;
@@ -675,8 +788,66 @@ int main(int argc, char** argv) {
 
     ADC_Init();
     UART1_Init();
-    I2C2_Init();
     setupTimer1();
+
+#if I2C_DIAG_ON_BOOT
+    I2C2_Init();
+
+    // I2C diagnostic: test the bus and report results via UART
+    {
+        char diag[128];
+        int scl_state = PORTAbits.RA2;
+        int sda_state = PORTAbits.RA3;
+        int step = 0;  // 0=not started
+
+        // Step 1: START
+        int s1 = I2C2_Start();
+        if (s1) {
+            step = 1;
+            // Step 2: Write address (write mode)
+            int s2 = I2C2_WriteByte((SD_I2C_ADDR << 1) | 0);
+            if (s2) {
+                step = 2;
+                // Step 3: Write command
+                int s3 = I2C2_WriteByte(SD_ACQUIRE_CMD);
+                if (s3) step = 3;
+            }
+        }
+        I2C2_Stop();
+
+        sprintf(diag,
+            "{\"alert\":\"I2C_DIAG: SCL=%d SDA=%d START=%s ADDR_ACK=%s CMD=%s step=%d CONL=0x%04X STAT=0x%04X\"}\r\n",
+            scl_state, sda_state,
+            (step >= 1) ? "OK" : "FAIL",
+            (step >= 2) ? "ACK" : "NACK",
+            (step >= 3) ? "OK" : "FAIL",
+            step,
+            (unsigned int)I2C2CONL,
+            (unsigned int)I2C2STAT);
+        UART1_WriteString(diag);
+
+        // Re-init after diagnostic
+        I2C2_Init();
+
+        // I2C scan: list every 7-bit address that acknowledges on the bus.
+        {
+            char scan[96];
+            char scan_msg[192];
+            int found = I2C2_ScanBus(scan, sizeof(scan));
+
+            sprintf(scan_msg,
+                "{\"alert\":\"I2C_SCAN: FOUND=%d ADDR=%s CONL=0x%04X STAT=0x%04X\"}\r\n",
+                found,
+                scan,
+                (unsigned int)I2C2CONL,
+                (unsigned int)I2C2STAT);
+            UART1_WriteString(scan_msg);
+        }
+
+        // Re-init after scan
+        I2C2_Init();
+    }
+#endif
 
     LCD_Init();
     LCD_Print("A Iniciar Sistema");
@@ -694,13 +865,13 @@ int main(int argc, char** argv) {
 
         if (PORTDbits.RD6 == 0 && PORTDbits.RD13 == 0 && PORTDbits.RD7 == 0 && PORTAbits.RA7 == 0) {
             party_mode();
-            I2C2_Init();
+            if (cfg_SD0 || cfg_SD1) I2C2_Init();
         }
         TRISAbits.TRISA7 = temp_trisa7;
 
         if (PORTDbits.RD13 == 0 && PORTDbits.RD7 == 0 && PORTDbits.RD6 != 0) {
             credits_mode();
-            I2C2_Init();
+            if (cfg_SD0 || cfg_SD1) I2C2_Init();
         }
 
         if (message_received) {
