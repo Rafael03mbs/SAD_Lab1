@@ -1,0 +1,10 @@
+In the Explorer 16/32:
+- the Pin 58 is the I2C clock (SCL2/RA2)
+- the Pin 59 is I2C data (SDA2/RA3)
+
+Connections (using a breadboard):
+- connect the ground of the Arduino to the ground of the Explorer 16/32
+- connect the A4 (SDA, the I2C data) pin of the Arduino to the Pin 59 of the Explorer 16/32
+- connect the A5 (SCL, the I2C clock) pin of the Arduino to the Pin 58 of the Explorer 16/32
+- connect a pull-up resistor of 5kohm from the I2C data line to the 5V of the Arduino
+- connect a pull-up resistor of 5kohm from the I2C clock line to the 5V of the Arduino
