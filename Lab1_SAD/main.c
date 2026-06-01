@@ -1,10 +1,8 @@
 /*
- * File:   main.c
- * Author: Iuri / Rafael / Tomas
+ * Ficheiro: main.c
+ * Autores:  Iuri / Rafael / Tomas
  *
- * Implements Data Acquisition Device logic for PIC24FJ1024GB610.
- * Includes HD44780 LCD control, JSON command parsing, party/credits modes,
- * temperature sensor, LDR on AN1, UART RX interrupt and I2C SD acquisition.
+ * Implementação do Dispositivo de Aquisição de Dados (SAD) no PIC24.
  */
 
 #include <stdio.h>
@@ -13,7 +11,7 @@
 #include <xc.h>
 #include "p24fj1024gb610.h"
 
-// Fcy settings
+// Definições de frequência
 #define Fos 8000000
 #define PreScalar 256
 #define IPerS (Fos / 2 / PreScalar)
@@ -33,34 +31,34 @@
 #define I2C_DIAG_ON_BOOT 0
 #define I2C_BUS_RECOVERY_ON_INIT 1
 
-// ----- LCD Pin Definitions -----
+// Definição dos pinos do LCD
 #define LCD_DATA  LATE
 #define LCD_RS    LATBbits.LATB15
 #define LCD_RW    LATDbits.LATD5
 #define LCD_E     LATDbits.LATD4
 
-// ----- Global variables for configuration -----
-int cfg_Ax = 0;  // AN5 - Potentiometer
-int cfg_Ay = 0;  // AN4 - Temperature sensor
-int cfg_Az = 0;  // AN1 - LDR
-int cfg_SD0 = 0; // Arduino A0 via I2C
-int cfg_SD1 = 0; // Arduino A1 via I2C
-int cfg_D6 = 0;  // RD6
-int cfg_D7 = 0;  // RD7
-int cfg_DB = 0;  // Bidirectional channel RA7
-int cfg_DV = 0;  // Virtual channel
-int cfg_b  = 0;  // RA7: 0=out, 1=in
-int cfg_v  = 0;  // 1 = virtual channel configured
-int cfg_n  = 1;  // Number of samples per message
-int cfg_p  = TIMER_TICKS_PER_SECOND;  // Sampling period in Timer1 ticks
+// Variáveis globais de configuração
+int cfg_Ax = 0;  // AN5 - Potenciómetro
+int cfg_Ay = 0;  // AN4 - Sensor de temperatura
+int cfg_Az = 0;  // AN1 - LDR (Luz)
+int cfg_SD0 = 0; // Arduino A0 (I2C)
+int cfg_SD1 = 0; // Arduino A1 (I2C)
+int cfg_D6 = 0;  // Entrada RD6
+int cfg_D7 = 0;  // Entrada RD7
+int cfg_DB = 0;  // Canal bidirecional RA7
+int cfg_DV = 0;  // Canal virtual
+int cfg_b  = 0;  // Sentido do RA7: 0 = saída, 1 = entrada
+int cfg_v  = 0;  // Canal virtual ativo (1) ou inativo (0)
+int cfg_n  = 1;  // Número de amostras por mensagem
+int cfg_p  = TIMER_TICKS_PER_SECOND;  // Período de amostragem em ticks do Timer1
 int cfg_alert_val = -1;
 
-// ----- UART RX Buffer -----
+// Buffer de receção da UART
 volatile char rx_buffer[RX_BUF_SIZE];
 volatile int rx_index = 0;
 volatile int message_received = 0;
 
-// ----- Data Buffers -----
+// Buffers de dados para amostras
 unsigned int buf_Ax[MAX_SAMPLES];
 int buf_Ay[MAX_SAMPLES];
 unsigned int buf_Az[MAX_SAMPLES];
@@ -74,13 +72,13 @@ volatile int sample_count = 0;
 
 
 
-// ----- Timer and flags -----
+// Temporização e flags de controlo
 volatile int time_tick = 0;
 volatile int sample_flag = 0;
 int alert_triggered = 0;
 int i2c2_ready = 0;
 
-/// ----- I2C Digital Sensor -----
+// Módulo I2C para leitura do Arduino (sensor digital)
 void I2C2_ClearErrors(void) {
     I2C2STATbits.I2COV = 0;
     I2C2STATbits.IWCOL = 0;
@@ -103,33 +101,33 @@ int I2C2_WaitFlagClear(volatile unsigned int *reg, unsigned int mask) {
     return 1;
 }
 
-// Manual bus recovery: toggle SCL to free a stuck SDA line
+// Recuperação do bus em caso de bloqueio (stuck bus)
 void I2C2_BusRecovery(void) {
-    I2C2CONLbits.I2CEN = 0;    // Disable I2C module
-    TRISAbits.TRISA2 = 0;      // SCL as output
-    TRISAbits.TRISA3 = 1;      // SDA as input
+    I2C2CONLbits.I2CEN = 0;    // Desativa módulo I2C
+    TRISAbits.TRISA2 = 0;      // SCL como saída
+    TRISAbits.TRISA3 = 1;      // SDA como entrada
     int i;
-    for (i = 0; i < 9; i++) {  // Clock up to 9 pulses
+    for (i = 0; i < 9; i++) {  // Gera até 9 impulsos de relógio
         LATAbits.LATA2 = 0;
         __delay_us(10);
         LATAbits.LATA2 = 1;
         __delay_us(10);
-        if (PORTAbits.RA3 == 1) break;  // SDA released
+        if (PORTAbits.RA3 == 1) break;  // SDA livre
     }
-    TRISAbits.TRISA2 = 1;      // Return SCL to input (open-drain)
+    TRISAbits.TRISA2 = 1;      // Repõe SCL como entrada (open-drain)
 }
 
 void I2C2_Init(void) {
-    PMD3bits.I2C2MD = 0;       // Enable power to the I2C2 peripheral
-    I2C2CONLbits.I2CEN = 0;    // Disable I2C module for configuration
+    PMD3bits.I2C2MD = 0;       // Ativa alimentação do periférico I2C2
+    I2C2CONLbits.I2CEN = 0;    // Desativa módulo I2C para configuração
     i2c2_ready = 0;
 
 #if I2C_BUS_RECOVERY_ON_INIT
-    // 9-pulse SCL bus recovery to release stuck SDA lines on reset/power-on
+    // Executa recuperação do bus no arranque
     I2C2_BusRecovery();
 #endif
 
-    // Configure SCL2 (RA2) and SDA2 (RA3) as digital inputs with open-drain enabled
+    // Configura pinos RA2 e RA3 em open-drain
     TRISAbits.TRISA2 = 1;
     TRISAbits.TRISA3 = 1;
     ODCAbits.ODCA2 = 1;
@@ -137,14 +135,14 @@ void I2C2_Init(void) {
 
     I2C2CONL = 0x0000;
     I2C2CONH = 0x0000;
-    I2C2BRG = 39;              // 100 kHz speed with FCY = 4 MHz 
+    I2C2BRG = 39;              // Configura velocidade para 100 kHz
     I2C2_ClearErrors();
-    I2C2STAT = 0x0000;         // Reset all status bits
+    I2C2STAT = 0x0000;         // Limpa registos de estado
 
-    I2C2CONLbits.DISSLW = 1;   // Disable slew rate control (standard speed)
-    I2C2CONLbits.I2CEN = 1;    // Enable module
+    I2C2CONLbits.DISSLW = 1;   // Desativa slew rate control
+    I2C2CONLbits.I2CEN = 1;    // Ativa módulo
     i2c2_ready = 1;
-    __delay_ms(5);             // Let the bus stabilize
+    __delay_ms(5);             // Aguarda estabilização do bus
 }
 
 int I2C2_Start(void) {
@@ -188,7 +186,7 @@ int I2C2_WriteByte(unsigned char value) {
 int I2C2_ReadByte(unsigned char *value, int send_nack) {
     unsigned int timeout = I2C_TIMEOUT;
 
-    if (!I2C2_WaitIdle()) return 0;   // Wait for bus idle before enabling receive
+    if (!I2C2_WaitIdle()) return 0;   // Aguarda bus livre antes da receção
 
     I2C2CONLbits.RCEN = 1;
     while (!I2C2STATbits.RBF) {
@@ -197,7 +195,7 @@ int I2C2_ReadByte(unsigned char *value, int send_nack) {
 
     *value = I2C2RCV;
 
-    if (!I2C2_WaitIdle()) return 0;   // Wait idle before sending ACK/NACK
+    if (!I2C2_WaitIdle()) return 0;   // Aguarda bus livre antes de ACK/NACK
 
     I2C2CONLbits.ACKDT = send_nack ? 1 : 0;
     I2C2CONLbits.ACKEN = 1;
@@ -217,8 +215,7 @@ int SD_ReadSensorsOnce(unsigned int *sd0, unsigned int *sd1) {
     if (!I2C2_WriteByte(SD_ACQUIRE_CMD)) goto fail;
     if (!I2C2_Stop()) goto fail;
 
-    // Give the Arduino enough time to complete analogRead in its receiveEvent()
-    // (analogRead ~110us x 2 channels + loop overhead + I2C ISR latency)
+    // Aguarda o processamento do analogRead por parte do Arduino
     __delay_ms(5);
 
     if (!I2C2_Start()) goto fail;
@@ -242,7 +239,7 @@ fail:
 }
 
 int SD_ReadSensors(unsigned int *sd0, unsigned int *sd1) {
-    // Retry up to 3 times with bus recovery on persistent failure
+    // Tenta ler até 3 vezes em caso de erro persistente
     int attempt;
 
     if (!i2c2_ready) {
@@ -251,7 +248,7 @@ int SD_ReadSensors(unsigned int *sd0, unsigned int *sd1) {
 
     for (attempt = 0; attempt < 3; attempt++) {
         if (SD_ReadSensorsOnce(sd0, sd1)) return 1;
-        // Full re-init between retries: bus recovery + module reset
+        // Reinicialização completa em caso de falha de leitura
         I2C2_Init();
         __delay_ms(5);
     }
@@ -305,7 +302,7 @@ int I2C2_ScanBus(char *result, unsigned int result_size) {
     return found;
 }
 
-// ----- LCD Functions -----
+// Funções de controlo do LCD
 void LCD_Pulse(void) {
     LCD_E = 1;
     __delay_us(50);
@@ -456,7 +453,7 @@ void party_mode(void) {
     }
     __delay_ms(50);
 
-    TRISA = (TRISA & 0xFF00) | 0x008C;  // Keep RA2/RA3 as input (I2C), RA7 as input
+    TRISA = (TRISA & 0xFF00) | 0x008C;  // Mantém RA2/RA3 como entrada (I2C) e RA7 como entrada
 
     while (1) {
         LATA = (LATA & 0xFF80) | (rand() & 0x007F);
@@ -486,7 +483,7 @@ void credits_mode(void) {
     unsigned int old_trisa = TRISA;
     unsigned int old_lata = LATA;
 
-    TRISA = (TRISA & 0xFF00) | 0x008C;  // Keep RA2/RA3 as input (I2C), RA7 as input
+    TRISA = (TRISA & 0xFF00) | 0x008C;  // Mantém RA2/RA3 como entrada (I2C) e RA7 como entrada
 
     const char* nomes[] = {
         "Iuri Mocas",
@@ -573,7 +570,7 @@ void credits_mode(void) {
     __delay_ms(2);
 }
 
-// ----- Interrupts -----
+// Rotinas de Interrupção (ISRs)
 void __attribute__ ((interrupt, no_auto_psv)) _T1Interrupt(void) {
     IFS0bits.T1IF = 0;
     if (cfg_p > 0) {
@@ -611,7 +608,7 @@ void __attribute__ ((interrupt, no_auto_psv)) _U1RXInterrupt(void) {
     }
 }
 
-// ----- Peripherals Setup -----
+// Configuração dos Periféricos
 void setupTimer1(void) {
     TMR1 = 0;
     PR1 = IPerS / 10;
@@ -671,7 +668,7 @@ unsigned int ADC_Read(int channel) {
     return ADC1BUF0;
 }
 
-// ----- JSON Extractor -----
+// Parsing de JSON
 int get_json_val(const char *json, const char *key, int default_val) {
     const char *pos = json;
     int key_len = strlen(key);
@@ -719,7 +716,7 @@ void process_json_config(const char *json) {
         LATAbits.LATA1 = s1 & 1;
     }
 
-    // RA2/RA3 are reserved for I2C2 when the Arduino SD is connected.
+    // RA2/RA3 estão reservados para o barramento I2C2 quando o Arduino (SD) está ativo.
     int s2 = get_json_val(json, "S2", -1);
     if (s2 != -1 && !cfg_SD0 && !cfg_SD1) {
         LATAbits.LATA2 = s2 & 1;
@@ -790,12 +787,12 @@ void send_monitoring_message(void) {
     UART1_WriteString("}\r\n");
 }
 
-// ----- Main -----
+// Função Principal
 int main(int argc, char** argv) {
     ANSD = 1;
-    // Preserve RA2/RA3 as inputs — they are I2C2 SCL/SDA pins.
-    // Driving them low as outputs would lock the I2C bus.
-    TRISA = 0x000C;            // RA2=1 (input), RA3=1 (input), rest=output
+    // RA2 e RA3 devem ser mantidos como entrada (impedância de I2C)
+    // para evitar bloquear o barramento I2C.
+    TRISA = 0x000C;            // RA2=1 (entrada), RA3=1 (entrada), restantes como saída
     PORTA = 0x0000;
 
     TRISDbits.TRISD6 = 1;
@@ -810,22 +807,22 @@ int main(int argc, char** argv) {
 #if I2C_DIAG_ON_BOOT
     I2C2_Init();
 
-    // I2C diagnostic: test the bus and report results via UART
+    // Diagnóstico do bus I2C: reporta estado das linhas via UART
     {
         char diag[128];
         int scl_state = PORTAbits.RA2;
         int sda_state = PORTAbits.RA3;
-        int step = 0;  // 0=not started
+        int step = 0;  // Estado do diagnóstico
 
-        // Step 1: START
+        // Passo 1: Condição START
         int s1 = I2C2_Start();
         if (s1) {
             step = 1;
-            // Step 2: Write address (write mode)
+            // Passo 2: Envia endereço de escrita
             int s2 = I2C2_WriteByte((SD_I2C_ADDR << 1) | 0);
             if (s2) {
                 step = 2;
-                // Step 3: Write command
+                // Passo 3: Envia comando de aquisição
                 int s3 = I2C2_WriteByte(SD_ACQUIRE_CMD);
                 if (s3) step = 3;
             }
@@ -843,10 +840,10 @@ int main(int argc, char** argv) {
             (unsigned int)I2C2STAT);
         UART1_WriteString(diag);
 
-        // Re-init after diagnostic
+        // Reinicialização após diagnóstico
         I2C2_Init();
 
-        // I2C scan: list every 7-bit address that acknowledges on the bus.
+        // Scan do bus I2C: lista todos os endereços ativos no bus
         {
             char scan[96];
             char scan_msg[192];
@@ -861,7 +858,7 @@ int main(int argc, char** argv) {
             UART1_WriteString(scan_msg);
         }
 
-        // Re-init after scan
+        // Reinicialização após scan
         I2C2_Init();
     }
 #endif
@@ -933,13 +930,12 @@ int main(int argc, char** argv) {
             if (cfg_Az) {
                 int valorADC = ADC_Read(1);
                 if (valorADC == 0) valorADC = 1;
-                if (valorADC > 1023) valorADC = 1023; // Prevent division-by-zero
+                if (valorADC > 1023) valorADC = 1023; // Evita divisão por zero
                 
-                // For a 5k ohm fixed resistor in voltage divider:
+                // Cálculo da intensidade luminosa (Lux):
                 // R_LDR = 5000 * (1024.0 / valorADC - 1.0)
-                // R_LDR_kOhm = 5.0 * (1024.0 / valorADC - 1.0)
                 // Lux = 500.0 / R_LDR_kOhm
-                // Simplified formula: Lux = (100.0 * valorADC) / (1024.0 - valorADC)
+                // Fórmula simplificada: Lux = (100.0 * valorADC) / (1024.0 - valorADC)
                 float valorLux = (100.0 * valorADC) / (1024.0 - valorADC);
                 
                 cur_Az = (unsigned int)valorLux;

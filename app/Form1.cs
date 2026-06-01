@@ -21,7 +21,7 @@ namespace DADApp
         private int i2cOkCount;
         private int i2cErrCount;
 
-        // HttpClient estático preparado para o Passo 3
+        // Cliente HTTP preparado para envio de dados
         private static readonly HttpClient httpClient = new HttpClient();
 
         public Form1()
@@ -32,7 +32,7 @@ namespace DADApp
             LoadAvailablePorts();
             LogMessage("Log detalhado: " + appLogPath);
 
-            // Bind control events for instant configuration updates
+            // Associa eventos dos controlos para envio imediato de alterações de configuração
             numP.ValueChanged += (s, e) => SendConfiguration();
             numN.ValueChanged += (s, e) => SendConfiguration();
             chkAx.CheckedChanged += (s, e) => SendConfiguration();
@@ -45,9 +45,7 @@ namespace DADApp
             chkDV.CheckedChanged += (s, e) => SendConfiguration();
         }
 
-        // =====================================================================
-        //  Serial Port Setup
-        // =====================================================================
+        // Configuração da porta série
 
         private void ConfigureSerialPort()
         {
@@ -59,9 +57,7 @@ namespace DADApp
             serialPort1.DataReceived += SerialPort1_DataReceived;
         }
 
-        // =====================================================================
-        //  UI Event Handlers
-        // =====================================================================
+        // Tratamento de eventos da Interface Gráfica
 
         private void btnRefresh_Click(object? sender, EventArgs e)
         {
@@ -89,7 +85,7 @@ namespace DADApp
             int db = chkDB.Checked ? 1 : 0;
             int dv = chkDV.Checked ? 1 : 0;
 
-            // Inclui todos os canais definidos no guião (Ax, Ay, Az, SD0, SD1, D6, D7, DB, DV)
+            // Inclui todos os canais definidos (Ax, Ay, Az, SD0, SD1, D6, D7, DB, DV)
             string jsonCmd = $"{{\"p\":{numP.Value}, \"n\":{numN.Value}, \"Ax\":{ax}, \"Ay\":{ay}, \"SD0\":{sd0}, \"SD1\":{sd1}, \"D6\":{d6}, \"D7\":{d7}, \"DB\":{db}, \"DV\":{dv}}}\n";
 
             try
@@ -105,9 +101,7 @@ namespace DADApp
             }
         }
 
-        // =====================================================================
-        //  Serial Port Management
-        // =====================================================================
+        // Gestão da porta série
 
         private void LoadAvailablePorts()
         {
@@ -156,9 +150,7 @@ namespace DADApp
             }
         }
 
-        // =====================================================================
-        //  Serial Data Reception & Processing
-        // =====================================================================
+        // Receção e processamento de dados da porta série
 
         private void SerialPort1_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
@@ -183,7 +175,7 @@ namespace DADApp
             }
             catch (InvalidOperationException)
             {
-                // The port can be closed while DataReceived is still unwinding.
+                // A porta série pode ter sido fechada entretanto
             }
             catch (IOException ex)
             {
@@ -220,7 +212,7 @@ namespace DADApp
                 var root = doc.RootElement;
                 AppendAppLog("[RX JSON] " + data);
 
-                // Handle config acknowledgement
+                // Confirmação da configuração pelo DAD
                 if (root.TryGetProperty("status", out var status))
                 {
                     RunOnUiThread(() =>
@@ -230,7 +222,7 @@ namespace DADApp
                     return;
                 }
 
-                // Handle alert messages
+                // Receção de mensagens de alerta
                 if (root.TryGetProperty("alert", out var alertProp))
                 {
                     string alertMsg = alertProp.GetString() ?? "unknown";
@@ -241,11 +233,11 @@ namespace DADApp
                     return;
                 }
 
-                // Process sensor data arrays
+                // Extração dos arrays de dados
                 string[] sensoresPossiveis = { "Ax", "Ay", "SD0", "SD1", "D6", "D7", "DB", "DV" };
                 List<string> summaries = BuildSensorSummaries(root, sensoresPossiveis);
 
-                // Track I2C health for the status panel
+                // Estado de funcionamento do I2C
                 UpdateI2CStatus(root);
 
                 if (summaries.Count > 0)
@@ -279,9 +271,7 @@ namespace DADApp
             }
         }
 
-        // =====================================================================
-        //  I2C Diagnostic Helpers
-        // =====================================================================
+        // Diagnóstico de erros do bus I2C
 
         private void UpdateI2CStatus(JsonElement root)
         {
@@ -314,7 +304,7 @@ namespace DADApp
             else
             {
                 i2cOkCount++;
-                i2cErrCount = 0; // reset consecutive error counter
+                i2cErrCount = 0; // Reset do contador de erros
             }
 
             RunOnUiThread(() =>
@@ -332,9 +322,7 @@ namespace DADApp
             });
         }
 
-        // =====================================================================
-        //  Sensor Data Formatting
-        // =====================================================================
+        // Formatação das amostras recebidas
 
         private static List<string> BuildSensorSummaries(JsonElement root, string[] sensors)
         {
@@ -395,9 +383,7 @@ namespace DADApp
             return $"{values.Count} amostra(s) [{text}]";
         }
 
-        // =====================================================================
-        //  XML Builder
-        // =====================================================================
+        // Construção do documento XML
 
         private static bool TryBuildXmlForSensor(JsonElement root, string sensor, out string xmlOutput)
         {
@@ -425,9 +411,7 @@ namespace DADApp
             return true;
         }
 
-        // =====================================================================
-        //  HTTP Communication
-        // =====================================================================
+        // Envio de dados via HTTP POST
 
         private async Task SendDataToServerAsync(string xmlPayload)
         {
@@ -456,9 +440,7 @@ namespace DADApp
             }
         }
 
-        // =====================================================================
-        //  Serial Port Disconnect
-        // =====================================================================
+        // Desconexão segura da porta série
 
         private async Task DisconnectSerialPortAsync()
         {
@@ -523,13 +505,11 @@ namespace DADApp
             }
             catch (Exception)
             {
-                // Ignore shutdown errors so closing the form never gets stuck here.
+                // Ignora erros ao fechar a porta no encerramento
             }
         }
 
-        // =====================================================================
-        //  Thread-safe UI helpers
-        // =====================================================================
+        // Auxiliares de Thread-safe para a UI
 
         private void RunOnUiThread(Action action)
         {
@@ -566,17 +546,15 @@ namespace DADApp
             }
             catch (ObjectDisposedException)
             {
-                // The form may be closing while background work is finishing.
+                // O formulário pode ter sido fechado no encerramento da app
             }
             catch (InvalidOperationException)
             {
-                // The form may be closing while background work is finishing.
+                // O formulário pode ter sido fechado no encerramento da app
             }
         }
 
-        // =====================================================================
-        //  Serial Buffer / JSON Extraction
-        // =====================================================================
+        // Gestão do Buffer Série e extração de JSON
 
         private List<string> ExtractJsonMessages(string incoming)
         {
@@ -686,9 +664,7 @@ namespace DADApp
             }
         }
 
-        // =====================================================================
-        //  Logging
-        // =====================================================================
+        // Logs locais e depuração
 
         private void AppendAppLog(string msg)
         {
